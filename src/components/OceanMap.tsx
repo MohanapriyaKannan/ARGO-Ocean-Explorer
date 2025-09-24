@@ -19,12 +19,13 @@ export default function OceanMap({ floatLocations, userLocation, oceanKey }: Oce
   const markersRef = useRef<mapboxgl.Marker[]>([]);
   const userLocationMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const [isMapReady, setIsMapReady] = useState(false);
-  const [mapboxToken, setMapboxToken] = useState('');
-  const [showTokenInput, setShowTokenInput] = useState(true);
+  
+  // Add your Mapbox public token here (starts with pk.)
+  const mapboxToken = 'pk.eyJ1IjoibG92YWJsZS1kZW1vIiwiYSI6ImNsOWM5Z2ZwYzBnYzQzcW1sMjNlYnl6eDgifQ.demo-token-replace-with-yours';
 
   // Initialize map
   useEffect(() => {
-    if (!mapContainer.current || mapRef.current || !mapboxToken) return;
+    if (!mapContainer.current || mapRef.current) return;
 
     const initMap = () => {
       try {
@@ -32,10 +33,10 @@ export default function OceanMap({ floatLocations, userLocation, oceanKey }: Oce
         
         const map = new mapboxgl.Map({
           container: mapContainer.current!,
-          style: 'mapbox://styles/mapbox/satellite-v9',
+          style: 'mapbox://styles/mapbox/satellite-streets-v12',
           center: [75, 10],
           zoom: 3,
-          projection: 'globe' as any
+          projection: 'mercator' as any
         });
 
         map.addControl(new mapboxgl.NavigationControl(), 'top-right');
@@ -134,7 +135,7 @@ export default function OceanMap({ floatLocations, userLocation, oceanKey }: Oce
       }
       setIsMapReady(false);
     };
-  }, [mapboxToken]);
+  }, []);
 
   // Update user location
   useEffect(() => {
@@ -256,44 +257,9 @@ export default function OceanMap({ floatLocations, userLocation, oceanKey }: Oce
     console.log(`🗺️ Updated map with ${floatLocations.length} ARGO floats`);
   }, [floatLocations, oceanKey, isMapReady]);
 
-  const handleTokenSubmit = () => {
-    if (mapboxToken.trim()) {
-      setShowTokenInput(false);
-    }
-  };
-
   return (
     <div className="relative w-full h-[520px] rounded-2xl overflow-hidden shadow-2xl">
-      {showTokenInput && (
-        <div className="absolute inset-0 z-[1000] bg-background/95 backdrop-blur-sm flex items-center justify-center p-6">
-          <div className="bg-card p-6 rounded-xl shadow-lg max-w-md w-full">
-            <h3 className="text-lg font-semibold mb-4">Mapbox Token Required</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Get your free Mapbox public token from{' '}
-              <a href="https://mapbox.com" target="_blank" rel="noopener noreferrer" className="text-primary underline">
-                mapbox.com
-              </a>
-            </p>
-            <div className="space-y-3">
-              <Input
-                placeholder="pk.eyJ1IjoieW91ci11c2VybmFtZSI..."
-                value={mapboxToken}
-                onChange={(e) => setMapboxToken(e.target.value)}
-                className="font-mono text-xs"
-              />
-              <Button 
-                onClick={handleTokenSubmit}
-                disabled={!mapboxToken.trim()}
-                className="w-full"
-              >
-                Load Map
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {userLocation && !showTokenInput && (
+      {userLocation && (
         <div className="absolute top-4 right-4 z-[1000] ocean-glass rounded-full px-3 py-2 text-sm font-medium text-foreground flex items-center gap-2">
           <MapPin className="w-4 h-4 text-ocean-red" />
           Your Location
@@ -306,12 +272,18 @@ export default function OceanMap({ floatLocations, userLocation, oceanKey }: Oce
         style={{ background: 'linear-gradient(135deg, #0c4a6e 0%, #1e40af 50%, #7c3aed 100%)' }}
       />
       
-      {!isMapReady && !showTokenInput && (
+      {!isMapReady && (
         <div className="absolute inset-0 flex items-center justify-center ocean-glass rounded-2xl">
           <div className="text-center text-foreground">
             <div className="animate-spin w-8 h-8 border-2 border-ocean-light border-t-transparent rounded-full mx-auto mb-2"></div>
             <p className="text-sm">Loading Mapbox...</p>
           </div>
+        </div>
+      )}
+      
+      {!mapboxToken.includes('demo-token') ? null : (
+        <div className="absolute bottom-4 left-4 z-[1000] bg-yellow-100 border border-yellow-300 text-yellow-800 px-3 py-2 rounded-lg text-xs">
+          Add your Mapbox token in OceanMap.tsx for full functionality
         </div>
       )}
     </div>
