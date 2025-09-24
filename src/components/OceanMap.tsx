@@ -33,7 +33,7 @@ export default function OceanMap({ floatLocations, userLocation, oceanKey }: Oce
         
         const map = new mapboxgl.Map({
           container: mapContainer.current!,
-          style: 'mapbox://styles/mapbox/satellite-streets-v12',
+          style: 'mapbox://styles/mapbox/streets-v12',
           center: [75, 10],
           zoom: 3,
           projection: 'mercator' as any
