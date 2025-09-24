@@ -27,7 +27,7 @@ export default function OceanMap({ floatLocations, userLocation, oceanKey }: Oce
     const initMap = async () => {
       try {
         const loader = new Loader({
-          apiKey: "AIzaSyBq-X7V9uZF8E_rQ3_XJ2_5_TdH8K9FfYU", // Public demo key - replace with your own
+          apiKey: "YOUR_GOOGLE_MAPS_API_KEY", // Replace with your Google Maps API key
           version: "3.55",
           libraries: ["places", "geometry"]
         });
